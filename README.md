@@ -3,7 +3,6 @@
 
 ---
 
-# Summary: 
 The research code for experiments in the paper [“Influence Functions for Scalable Data Attribution in Diffusion Models”](https://arxiv.org/abs/2410.13850) (by Bruno Mlodozeniec, Runa Eschenhagen, Juhan Bae, Alexander Immer, David Krueger and Richard E. Turner).
 
 
