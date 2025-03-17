@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diffusion-influence"
+version = "0.1"
+dependencies = [
+  "torch >= 2.2",
+  "torchvision >= 0.17",
+  "curvlinops-for-pytorch@git+https://git@github.com/f-dangel/curvlinops.git",
+  "einops",
+  "hydra-core",
+  "wandb",
+  "tqdm",
+  "matplotlib",
+  "tueplots",
+  "pydantic",
+  "diffusers==0.27.2",
+  "datasets==2.19.0",
+  "accelerate==0.29.3",
+  #"fast-jl==0.1.3",
+  "traker",
+  "transformers==4.40.0",
+  "torchmetrics",
+]
+requires-python = ">=3.11"
+authors = [
+  {name = "Bruno Mlodozeniec"},
+  {name = "Runa Eschenhagen"},
+]
+description = "K-FAC Influence Functions for Denoising Diffusion Probabilistic Models"
+readme = "README.md"
+keywords = [
+  "deep-learning",
+  "ddpm",
+  "diffusion",
+  "generative-modelling",
+  "optimization",
+  "natural-gradient",
+  "fisher",
+  "ggn",
+  "kfac",
+  "curvature",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python"
+]
+
+[project.optional-dependencies]
+dev = [
+  "ruff",
+  "pytest",
+]
+
+[project.urls]
+Repository = "https://github.com/brunokm/diffusion-influence.git"
+"Bug Tracker" = "https://github.com/brunokm/diffusion-influence/issues"
+
+[tool.setuptools]
+packages = ["diffusion_influence"]
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+# Adds isort ("I") and pylint ("PL") to defaults.
+select = ["E4", "E7", "E9", "F", "I", "PL"]
+# Ignore pylint's overwritten loop variable by assignment error
+ignore = ["PLW2901", "PLR0912", "PLR0915"]
+
+[tool.ruff.lint.pylint]
+max-args = 10

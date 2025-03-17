@@ -1,0 +1,11 @@
+# Specify where config values (and the schema) come from:
+defaults:
+- base_schema  # Will use the dataclass schema (and defaults)
+- _self_  # Overrides described in this file will be be applied last (take precedence)
+
+dataloader:
+  pin_memory: False
+  train_batch_size: 16
+  eval_batch_size: 16
+  persistent_workers: False  # Doesn't make sense to set to True with current implementation
+  num_workers: 2

@@ -1,0 +1,33 @@
+# Specify where config values (and the schema) come from:
+defaults:
+- base_schema  # Will use the dataclass schema (and defaults)
+- _self_  # Overrides described in this file will be be applied last (take precedence)
+preconditioner: kfac
+kfac:
+  mc_samples: 1
+kfac_dataloader:
+  pin_memory: True
+  train_batch_size: 128
+  eval_batch_size: 128
+  persistent_workers: False  # Doesn't make sense to set to True with current implementation
+  num_workers: 4
+num_loss_batch_aggregations: 1
+num_measurement_batch_aggregations: 1
+train_gradient_compressor: identity
+query_gradient_compressor: identity
+train_compressor_kwargs: {}
+query_compressor_kwargs: {}
+
+cached_train_gradient_queue_size: 4
+cached_train_gradient_queue_num_workers: 4
+
+# The below defaults are set up for caching the (potentially compressed) query gradients.
+# The query gradient “computation” then should happen in the inner loop, because 
+# the query gradients are cached and reused, and the train gradients need to be recomputed.
+cache_train_gradients: False
+cached_train_gradients_path: null
+precondition_query_gradients: True
+cache_query_gradients: True
+query_batch_size: 1
+train_batch_size: 10
+outer_is_query_in_score_loop: False

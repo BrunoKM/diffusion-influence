@@ -1,0 +1,49 @@
+# Specify where config values (and the schema) come from:
+defaults:
+- base_schema  # Will use the dataclass schema (and defaults)
+- wandb: base  # The base config from wandb/base.yaml
+- _self_  # Overrides described in this file will be be applied last (take precedence)
+
+seed: 0
+# In D-TRAK, 8000 for full CIFAR2 dataset, 4000 for 50% subset
+# We use 32000 for full and 16000 for 50% subset
+num_training_iter: 32000  
+eval_frequency: 2000
+checkpoint_frequency: 2000
+log_loss_at_timesteps: [1, 10, 100, 500, 900]
+data:
+  dataset_name: cifar2
+  data_range: UNIT_BOUNDED
+dataloader:
+  pin_memory: True
+  train_batch_size: 128
+  eval_batch_size: 128
+  persistent_workers: True
+  num_workers: 4
+optimisation:
+  optimiser_type: ADAMW
+  lr: 1e-4
+  clip_grad: 1.0
+  weight_decay: 1e-6
+  ema_decay: 0.999
+  ema_power: 0.75
+  use_ema_warmup: True
+  warmup_steps: ${floor:${multiply:0.1, ${num_training_iter}}}  # 10% of total training steps
+  cosine_lr_schedule: True
+diffusion:
+  resolution: 32
+  max_timestep: 1000
+  num_inference_steps: 1000
+  beta_start: 0.0001
+  beta_end: 0.02
+  schedule_type: linear
+  variance_type: fixed_small
+accelerate:
+  mixed_precision: "no"
+  gradient_accumulation_steps: 1  # 1 for no accumulation
+  checkpoints_total_limit: 2
+# Note, this assumes the scripts are being executed from root of the repository (diffusion-influence)
+model_config_path: scripts/model_configs/unet_cifar2.json
+hydra:
+  run:
+    dir: outputs/${data.dataset_name}/${now:%Y-%m-%d}

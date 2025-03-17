@@ -1,0 +1,28 @@
+# Specify where config values (and the schema) come from:
+defaults:
+- base_schema  # Will use the dataclass schema (and defaults)
+- compute_influence_default  # Will use the config from scripts/configs/compute_influence_default.yaml and override it
+- _self_  # Overrides described in this file will be be applied last (take precedence)
+
+kfac:
+  correct_eigenvalues: True
+  use_exact_damping: True
+  num_samples_for_loss: 125  # Half of 250, becaues for EKFAC need two passes (one for computing the basis, one for the corrected eigenvalues)
+  damping: 1e-8
+
+kfac_dataloader:
+  train_batch_size: 64
+
+# 125 samples with 2 batches for aggregation = 250 samples below.
+# If memory is not an issue, you can increase the number of samples to 250 and reduce
+# the number of batches for aggregation to 1. If memory is a bottleneck, you can further reduce
+# num_samples and increase batch_aggregations accordingly.
+# If the GPU memory is a bottleneck, you can 
+num_samples_for_loss_scoring: 125
+num_samples_for_measurement_scoring: 125 
+num_loss_batch_aggregations: 2
+num_measurement_batch_aggregations: 2
+query_gradient_compressor: quantization
+query_compressor_kwargs:
+  bits: 8
+measurement: LOSS

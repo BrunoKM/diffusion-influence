@@ -1,0 +1,27 @@
+defaults:
+- base_schema  # Will use the dataclass schema (and defaults)
+- _self_  # Overrides described in this file will be be applied last (take precedence)
+
+save_filename: cifar2_lds_trak_ablation.pdf
+legend_pre: "\\texttt{Target  Measure Train.Loss}"
+legend_labels:
+  - "\\texttt{Loss    Loss    Loss}"
+  - "\\texttt{Loss    Sq.Norm Sq.Norm (D-TRAK)}"
+  # - "ELBO    ELBO    Loss"
+  - "\\texttt{ELBO    ELBO*   Loss}"
+  - "\\texttt{ELBO    Sq.Norm Sq.Norm (D-TRAK)}"
+measurement_dirs:
+  - "/srv/shared/outputs/measurements/DatasetType.cifar2/ddpm_samples_loss_measurement"
+  - "/srv/shared/outputs/measurements/DatasetType.cifar2/ddpm_samples_loss_measurement"
+  # - "/srv/shared/outputs/measurements/DatasetType.cifar2/ddpm_samples_elbo_measurement"
+  - "/srv/shared/outputs/measurements/DatasetType.cifar2/ddpm_samples_elbo_measurement"
+  - "/srv/shared/outputs/measurements/DatasetType.cifar2/ddpm_samples_elbo_measurement"
+influence_path_format_strings:
+- "/srv/shared/outputs/DatasetType.cifar2/idx_train-0/trak_for_ddpm_samples__measure_LOSS_trainloss_LOSS_250measure_250loss_damping{}/scores.npy"
+- "/srv/shared/outputs/DatasetType.cifar2/idx_train-0/trak_for_ddpm_samples__measure_SQUARE_NORM_trainloss_SQUARE_NORM_250measure_250loss_damping{}/scores.npy"
+# - "/srv/shared/outputs/DatasetType.cifar2/idx_train-0/trak_for_ddpm_samples__measure_ELBO_trainloss_LOSS_250measure_250loss_damping{}/scores.npy"
+- "/srv/shared/outputs/DatasetType.cifar2/idx_train-0/trak_for_ddpm_samples__measure_SIMPLIFIED_ELBO_trainloss_LOSS_250measure_250loss_damping{}/scores.npy"
+- "/srv/shared/outputs/DatasetType.cifar2/idx_train-0/trak_for_ddpm_samples__measure_SQUARE_NORM_trainloss_SQUARE_NORM_250measure_250loss_damping{}/scores.npy"
+damping_values_strings: ["1e-6", "1e-5", "1e-4", "1e-3", "1e-2", "1e-1", "1", "1e1", "1e2", "1e3", "1e4", "1e5", "1e6", "1e7", "1e8"]
+suptitle: "CIFAR-2 - TRAK Influence"
+color_groups: [0, 1, 2, 3]

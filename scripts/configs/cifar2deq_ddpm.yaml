@@ -1,0 +1,9 @@
+# Specify where config values (and the schema) come from:
+defaults:
+- base_schema  # Will use the dataclass schema (and defaults)
+- cifar2_ddpm  # Will use the config from scripts/configs/cifar2_ddpm.yaml and override it
+- _self_  # Overrides described in this file will be be applied last (take precedence)
+
+data:
+  dataset_name: cifar2deq
+  data_range: UNIT_BOUNDED

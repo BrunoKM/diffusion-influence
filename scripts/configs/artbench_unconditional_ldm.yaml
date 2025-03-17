@@ -1,0 +1,103 @@
+# Specify where config values (and the schema) come from:
+defaults:
+- base_schema  # Will use the dataclass schema (and defaults)
+- wandb: base  # The base config from wandb/base.yaml
+- _self_  # Overrides described in this file will be be applied last (take precedence)
+
+# Comparable models trained in previous literature:
+# --- Journey-TRAK: https://github.com/MadryLab/journey-TRAK
+# Text-conditioned LDM trained on MS-COCO (the newer 2017 variant)
+# CLIP AND VAE from Stable Diffusion 2, smaller UNet
+# Cosine LR schedule, starts at 2e-4 (assuming 118K training images as per 2017 split of 
+#   MS-COCO, and an unknown batch-size (:'c but likely 64??) this might amount to ~370k steps)
+# 200 epochs (on full MS-COCO ~)
+# - Architecture described by:
+# UNet2DConditionModel(
+#         sample_size=sample_size,  # the target image resolution
+#         in_channels=4,  # the number of input channels, 3 for RGB images
+#         out_channels=4,  # the number of output channels
+#         layers_per_block=2,  # how many ResNet layers to use per UNet block
+#         block_out_channels=(
+#             128,
+#             256,
+#             256,
+#             256,
+#         ),  # the number of output channels for each UNet block
+#         cross_attention_dim=1024,  # NOTE: 1024 for V2,
+#         down_block_types=(
+#             "CrossAttnDownBlock2D",
+#             "CrossAttnDownBlock2D",
+#             "CrossAttnDownBlock2D",
+#             "DownBlock2D",
+#         ),
+#         up_block_types=(
+#             "UpBlock2D",
+#             "CrossAttnUpBlock2D",
+#             "CrossAttnUpBlock2D",
+#             "CrossAttnUpBlock2D",
+#         ),
+#         attention_head_dim=8,
+#     )
+# --- D-TRAK paper: https://arxiv.org/pdf/2311.00500
+# Text conditioned LDM fine-tuned (with LORA) on ArtBench
+# 100 epochs
+#     (on full ArtBench 50k examples, batch-size 64) -> 78,125 steps
+#     however, they only train on 50% or 20% of the data, so ~40k or ~16k steps
+# 
+# 3e-4 peak LR of cosine schedule
+# Weight-decay of 1e-6
+# They use the 256x256 fine-tuned stable diffusion 
+# from https://huggingface.co/lambdalabs/miniSD-diffusers, but that's because 
+# they do LORA on the unet model. miniSD diffusers didn't finetune the VAE/CLIP, so
+# this doesn't matter if you retrain the UNET from scratch
+
+
+
+
+seed: 0
+# Specifying vae_name_or_path makes it into an LDM model
+# Use the VAE from the Stable Diffusion 2 model
+vae_name_or_path: "stabilityai/stable-diffusion-2-base"
+scheduler_name_or_path: "stabilityai/stable-diffusion-2-base"
+# We use 200,000 for full and 60,000 for 50% subset
+num_training_iter: 200000
+eval_frequency: 40000
+checkpoint_frequency: 40000
+log_loss_at_timesteps: [1, 10, 100, 500, 900]
+data:
+  dataset_name: artbench
+  data_range: UNIT_BOUNDED
+  examples_idxs_path: null
+dataloader:
+  pin_memory: True
+  train_batch_size: 64
+  eval_batch_size: 64
+  persistent_workers: True
+  num_workers: 4
+optimisation:
+  optimiser_type: ADAMW
+  lr: 1e-4
+  clip_grad: 1.0
+  weight_decay: 1e-6
+  ema_decay: 0.9999  # This is also the maximum decay rate
+  ema_power: 0.75
+  use_ema_warmup: True
+  warmup_steps: ${floor:${multiply:0.05, ${num_training_iter}}}  # 5% of total training steps
+  cosine_lr_schedule: False
+diffusion:
+  resolution: 256 # Not really used at the momemnt
+  max_timestep: 1000
+  num_inference_steps: 1000
+  beta_start: 0.00085
+  beta_end: 0.012
+  schedule_type: scaled_linear
+  variance_type: fixed_small
+accelerate:
+  mixed_precision: "no"
+  gradient_accumulation_steps: 1  # 1 for no accumulation
+  checkpoints_total_limit: 3
+# Note, this assumes the scripts are being executed from root of the repository (diffusion-influence)
+model_config_path: scripts/model_configs/unet_artbench.json
+hydra:
+  run:
+    dir: outputs/${data.dataset_name}/${now:%Y-%m-%d}

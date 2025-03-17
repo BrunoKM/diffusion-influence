@@ -1,0 +1,8 @@
+# Specify where config values (and the schema) come from:
+defaults:
+- base_schema  # Will use the dataclass schema (and defaults)
+- _self_  # Overrides described in this file will be be applied last (take precedence)
+
+train_model_idxs_path: null
+num_seeds: 5
+num_retrained_models: 100
