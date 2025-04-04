@@ -137,22 +137,6 @@ class ScoreCalculator:
 
         self.num_params = sum(p.numel() for p in self.params)
 
-    def batch_aggregated_gradient(
-        self,
-        inp,
-        func: Callable[[tuple[Tensor] | dict[str, Tensor], nn.Module], Tensor],
-        num_batch_aggregations: int,
-    ):
-        gradient: list[torch.Tensor] = [torch.zeros_like(p) for p in self.params]
-        for _ in range(num_batch_aggregations):
-            # Compute the gradient of the measurement w.r.t. model parameters
-            loss = func(inp, self.model)
-            for i, grad in enumerate(torch.autograd.grad(loss, self.params)):
-                gradient[i] += grad
-
-        gradient = [param_grad / num_batch_aggregations for param_grad in gradient]
-        return gradient
-
     def get_train_gradients_iterable(
         self,
         train_dataset: data.Dataset,
