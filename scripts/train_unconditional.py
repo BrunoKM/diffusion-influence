@@ -359,7 +359,6 @@ def main(config: DiffusionTrainConfig, accelerator: Accelerator):
             clean_images = vae_encode_to_latent(clean_images)
         if config.weighted_examples_idxs_path is not None:
             example_weights = batch["example_weight"]
-            # TODO: maybe unify with ddpm_train_step
             loss = weighted_ddpm_train_step(
                 denoise_model=model,
                 batch=clean_images,
@@ -426,7 +425,7 @@ def main(config: DiffusionTrainConfig, accelerator: Accelerator):
                     losses_by_dataset_by_timestep = {}
                     for dataset_name, dataloader in eval_dataloaders.items():
                         losses_by_timestep: dict[int, float] = defaultdict(lambda: 0)
-                        for eval_batch in take_n(dataloader, n=5):
+                        for eval_batch in take_n(dataloader, n=(num_eval_batches := 5)):
                             clean_images = eval_batch["input"]
                             if vae is not None:
                                 clean_images = vae_encode_to_latent(clean_images)
@@ -440,10 +439,9 @@ def main(config: DiffusionTrainConfig, accelerator: Accelerator):
                                 )
                                 losses_by_timestep[timestep] += loss.item()
                         for timestep in config.log_loss_at_timesteps:
-                            # TODO: make below constant (5) explicit
                             losses_by_dataset_by_timestep[
                                 f"{dataset_name}.timestep_{timestep}"
-                            ] = losses_by_timestep[timestep] / 5
+                            ] = losses_by_timestep[timestep] / num_eval_batches
                 # --- Log ELBO ---
                 match config.data.dataset_name:
                     case DatasetType.cifar10deq | DatasetType.cifar2deq:

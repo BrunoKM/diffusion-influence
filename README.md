@@ -79,7 +79,7 @@ MODEL_TRAIN_OUTPUT_DIR="$PROJECT_OUTPUT_DIR/DatasetType.cifar2/idx_train-0";
         measurement=LOSS \
         hydra.run.dir=$PROJECT_OUTPUT_DIR/measurements/DatasetType.cifar2/'ddpm_samples_${measurement}_measurement'/idx_train-0'
     ```
-    Then for all the retrained models: ... TODO
+    Then for all the retrained models:
     ```shell
     for (( SUBIDX=0; SUBIDX<100; SUBIDX++ )); do
         for (( SEED=0; SEED<5; SEED++ )); do

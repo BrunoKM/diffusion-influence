@@ -1,7 +1,3 @@
-"""
-TODO: Add docstring.
-"""
-
 from functools import partial
 from typing import Callable, Iterable, Protocol
 

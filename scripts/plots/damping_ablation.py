@@ -213,7 +213,7 @@ def main(config: PlotConfig):
     ):
         # Sometimes we have inverted signs, so we invert them back :|
         # TODO: make signs consistent in influence and measurement calculations
-        logging.warn("All rank correlations are negative. Inverting them.")
+        logging.warning("All rank correlations are negative. Inverting them.")
         rank_correlations = [
             -rank_correlation for rank_correlation in rank_correlations
         ]
