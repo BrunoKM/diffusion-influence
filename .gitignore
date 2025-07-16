@@ -164,7 +164,7 @@ cython_debug/
 .python-version
 
 # Output logging and experiments directory:
-outputs/
+/outputs/
 
 CIFAR2/saved
 CIFAR10/saved
@@ -173,14 +173,14 @@ CelebA/saved
 .vscode
 
 # Data directory:
-data/*/
-data/*
+/data/*/
+/data/*
 
 CIFAR2/data
 CIFAR10/data
 CelebA/data
 # WandB directory:
-wandb
+/wandb
 
 # sbatch scripts
 hpc_submit.sh
